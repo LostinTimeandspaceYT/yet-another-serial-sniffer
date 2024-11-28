@@ -4,6 +4,7 @@ import "go.bug.st/serial"
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/charmbracelet/bubbles/key"
@@ -73,20 +74,24 @@ func getSerialPorts() {
 	ports, err := serial.GetPortsList()
 
 	if err != nil {
-		print(err)
+		log.Fatal(err)
 	}
 	if len(ports) == 0 {
-		print("No serial ports found")
-	} else {
-		print(ports)
+		log.Fatal("No serial ports found")
+		return
+	}
+
+	// Print the list of detected ports
+	for _, port := range ports {
+		fmt.Printf("Found port: %v\n", port)
 	}
 }
 
 func main() {
+	getSerialPorts()
 	p := tea.NewProgram(initialModel())
 	if _, err := p.Run(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	getSerialPorts()
 }
